@@ -1,12 +1,13 @@
-﻿using Ezy.ApiService.NotifyService.Service;
+﻿//using Ezy.ApiService.NotifyService.Service;
 using Ezy.ApiService.ReleaseService.Helper;
 using Ezy.APIService.Core.Services;
-using Ezy.APIService.NotifyService.Helper;
+//using Ezy.APIService.NotifyService.Helper;
 using Ezy.Module.BaseService.FrameWork;
 using Ezy.Module.Library.Message;
 using Microsoft.AspNetCore.SignalR;
 using SourceAPI.Core.DataInfo.Cached;
 using SourceAPI.DataShared.Common;
+using SourceAPI.Shared.Helper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -46,27 +47,27 @@ namespace SourceAPI.Shared.Services
             #endregion LogMethodVersion
             if (NotificationHub_Dic.ContainsKey(param.id))
             {
-                var connections = NotificationHub_Dic[param.id].ToArray();
-                if (connections != null && connections.Length > 0)
-                {
-                    if (param.type == eTypeSinalR.SignalR_NotifyCount.ToString())
-                    {
-                        var service = EzyFrameWorkManagement.CreateInstance<INotificationMessageService>();
-                        var result = service.GetTotalNew(param.id, new string[] { }, out string sMessage);
-                        if (result != null)
-                        {
-                            foreach (var con in connections)
-                            {
-                                hub.Clients.Clients(con.ConnectionId).SendAsync("ReceiveMessage", new NotificationSignalR_Count()
-                                {
-                                    Type = param.type,
-                                    NotifyCount = result.Count, //Các Notify chưa đọc
-                                    StatusCode = 200
-                                });
-                            }
-                        }
-                    }
-                }
+                //var connections = NotificationHub_Dic[param.id].ToArray();
+                //if (connections != null && connections.Length > 0)
+                //{
+                //    if (param.type == eTypeSinalR.SignalR_NotifyCount.ToString())
+                //    {
+                //        var service = EzyFrameWorkManagement.CreateInstance<INotificationMessageService>();
+                //        var result = service.GetTotalNew(param.id, new string[] { }, out string sMessage);
+                //        if (result != null)
+                //        {
+                //            foreach (var con in connections)
+                //            {
+                //                hub.Clients.Clients(con.ConnectionId).SendAsync("ReceiveMessage", new NotificationSignalR_Count()
+                //                {
+                //                    Type = param.type,
+                //                    NotifyCount = result.Count, //Các Notify chưa đọc
+                //                    StatusCode = 200
+                //                });
+                //            }
+                //        }
+                //    }
+                //}
             }
             if (NotificationHub_App_Dic.ContainsKey(param.id))
             { 

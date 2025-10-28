@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
 	<PropertyGroup>
-		<TargetFramework>net5.0</TargetFramework>
+		<TargetFramework>net9.0</TargetFramework>
 		<Version>1.07.16.1144</Version>
 		<UserSecretsId>714fc7ab-4d4d-431a-8342-ef9daf00f059</UserSecretsId>
 		<AssemblyName>SourceAPI</AssemblyName>
@@ -164,14 +164,14 @@
 		<PackageReference Include="Magick.NET-Q16-AnyCPU" Version="8.3.3" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.Facebook" Version="5.0.3" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="5.0.3" />
-		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.3" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.8" />
 		<PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.2.0" />
-		<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="5.0.3" />
-		<PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="9.0.10" />
+		<PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.0.1" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.1" />
-		<PackageReference Include="System.Configuration.ConfigurationManager" Version="5.0.0" />
-		<PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
-		<PackageReference Include="System.Runtime.Caching" Version="5.0.0" />
+		<PackageReference Include="System.Configuration.ConfigurationManager" Version="9.0.8" />
+		<PackageReference Include="System.Runtime.Caching" Version="9.0.8" />
 		<PackageReference Include="System.ServiceModel.Primitives" Version="4.10.0" />
 	</ItemGroup>
 
@@ -226,15 +226,6 @@
 	  </Reference>
 	  <Reference Include="Ezy.APIService.LogService">
 	    <HintPath>..\Libs\Ezy.APIService.LogService.dll</HintPath>
-	  </Reference>
-	  <Reference Include="Ezy.ApiService.NotifyAPI">
-	    <HintPath>..\Libs\Ezy.ApiService.NotifyAPI.dll</HintPath>
-	  </Reference>
-	  <Reference Include="Ezy.ApiService.NotifyCore">
-	    <HintPath>..\Libs\Ezy.ApiService.NotifyCore.dll</HintPath>
-	  </Reference>
-	  <Reference Include="Ezy.ApiService.NotifyService">
-	    <HintPath>..\Libs\Ezy.ApiService.NotifyService.dll</HintPath>
 	  </Reference>
 	  <Reference Include="Ezy.ApiService.Release.API">
 	    <HintPath>..\Libs\Ezy.ApiService.Release.API.dll</HintPath>
@@ -314,116 +305,11 @@
 	  <Reference Include="Microsoft.AspNet.Identity.Core">
 	    <HintPath>..\Libs\Microsoft.AspNet.Identity.Core.dll</HintPath>
 	  </Reference>
-	  <Reference Include="Microsoft.AspNetCore.Authentication.JwtBearer">
-	    <HintPath>..\Libs\Microsoft.AspNetCore.Authentication.JwtBearer.dll</HintPath>
-	  </Reference>
-	  <Reference Include="Microsoft.Data.SqlClient">
-	    <HintPath>..\Libs\Microsoft.Data.SqlClient.dll</HintPath>
-	  </Reference>
-	  <Reference Include="Microsoft.DotNet.PlatformAbstractions">
-	    <HintPath>..\Libs\Microsoft.DotNet.PlatformAbstractions.dll</HintPath>
-	  </Reference>
-	  <Reference Include="Microsoft.EntityFrameworkCore">
-	    <HintPath>..\Libs\Microsoft.EntityFrameworkCore.dll</HintPath>
-	  </Reference>
-	  <Reference Include="Microsoft.EntityFrameworkCore.Abstractions">
-	    <HintPath>..\Libs\Microsoft.EntityFrameworkCore.Abstractions.dll</HintPath>
-	  </Reference>
-	  <Reference Include="Microsoft.EntityFrameworkCore.Relational">
-	    <HintPath>..\Libs\Microsoft.EntityFrameworkCore.Relational.dll</HintPath>
-	  </Reference>
-	  <Reference Include="Microsoft.EntityFrameworkCore.SqlServer">
-	    <HintPath>..\Libs\Microsoft.EntityFrameworkCore.SqlServer.dll</HintPath>
-	  </Reference>
-	  <Reference Include="Microsoft.Extensions.DependencyInjection">
-	    <HintPath>..\Libs\Microsoft.Extensions.DependencyInjection.dll</HintPath>
-	  </Reference>
-	  <Reference Include="Microsoft.Extensions.DependencyModel">
-	    <HintPath>..\Libs\Microsoft.Extensions.DependencyModel.dll</HintPath>
-	  </Reference>
-	  <Reference Include="Microsoft.Identity.Client">
-	    <HintPath>..\Libs\Microsoft.Identity.Client.dll</HintPath>
-	  </Reference>
-	  <Reference Include="Microsoft.IdentityModel.JsonWebTokens">
-	    <HintPath>..\Libs\Microsoft.IdentityModel.JsonWebTokens.dll</HintPath>
-	  </Reference>
-	  <Reference Include="Microsoft.IdentityModel.Logging">
-	    <HintPath>..\Libs\Microsoft.IdentityModel.Logging.dll</HintPath>
-	  </Reference>
-	  <Reference Include="Microsoft.IdentityModel.Protocols">
-	    <HintPath>..\Libs\Microsoft.IdentityModel.Protocols.dll</HintPath>
-	  </Reference>
-	  <Reference Include="Microsoft.IdentityModel.Protocols.OpenIdConnect">
-	    <HintPath>..\Libs\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll</HintPath>
-	  </Reference>
-	  <Reference Include="Microsoft.IdentityModel.Tokens">
-	    <HintPath>..\Libs\Microsoft.IdentityModel.Tokens.dll</HintPath>
-	  </Reference>
-	  <Reference Include="Microsoft.IO.RecyclableMemoryStream">
-	    <HintPath>..\Libs\Microsoft.IO.RecyclableMemoryStream.dll</HintPath>
-	  </Reference>
-	  <Reference Include="Microsoft.OpenApi">
-	    <HintPath>..\Libs\Microsoft.OpenApi.dll</HintPath>
-	  </Reference>
-	  <Reference Include="Microsoft.ReportViewer.Common">
-	    <HintPath>..\Libs\Microsoft.ReportViewer.Common.dll</HintPath>
-	  </Reference>
-	  <Reference Include="Microsoft.ReportViewer.DataVisualization">
-	    <HintPath>..\Libs\Microsoft.ReportViewer.DataVisualization.dll</HintPath>
-	  </Reference>
-	  <Reference Include="Microsoft.ReportViewer.Design">
-	    <HintPath>..\Libs\Microsoft.ReportViewer.Design.dll</HintPath>
-	  </Reference>
-	  <Reference Include="Microsoft.ReportViewer.Design.resources">
-	    <HintPath>..\Libs\Microsoft.ReportViewer.Design.resources.dll</HintPath>
-	  </Reference>
-	  <Reference Include="Microsoft.ReportViewer.ProcessingObjectModel">
-	    <HintPath>..\Libs\Microsoft.ReportViewer.ProcessingObjectModel.dll</HintPath>
-	  </Reference>
-	  <Reference Include="Microsoft.ReportViewer.WebDesign">
-	    <HintPath>..\Libs\Microsoft.ReportViewer.WebDesign.dll</HintPath>
-	  </Reference>
-	  <Reference Include="Microsoft.ReportViewer.WebForms">
-	    <HintPath>..\Libs\Microsoft.ReportViewer.WebForms.dll</HintPath>
-	  </Reference>
-	  <Reference Include="Microsoft.ReportViewer.WinForms">
-	    <HintPath>..\Libs\Microsoft.ReportViewer.WinForms.dll</HintPath>
-	  </Reference>
 	  <Reference Include="MimeMapping">
 	    <HintPath>..\Libs\MimeMapping.dll</HintPath>
 	  </Reference>
-	  <Reference Include="Newtonsoft.Json">
-	    <HintPath>..\Libs\Newtonsoft.Json.dll</HintPath>
-	  </Reference>
 	  <Reference Include="RestSharp">
 	    <HintPath>..\Libs\RestSharp.dll</HintPath>
-	  </Reference>
-	  <Reference Include="Swashbuckle.AspNetCore.SwaggerUI">
-	    <HintPath>..\Libs\Swashbuckle.AspNetCore.SwaggerUI.dll</HintPath>
-	  </Reference>
-	  <Reference Include="System.Configuration.ConfigurationManager">
-	    <HintPath>..\Libs\System.Configuration.ConfigurationManager.dll</HintPath>
-	  </Reference>
-	  <Reference Include="System.Data.SqlClient">
-	    <HintPath>..\Libs\System.Data.SqlClient.dll</HintPath>
-	  </Reference>
-	  <Reference Include="System.Diagnostics.DiagnosticSource">
-	    <HintPath>..\Libs\System.Diagnostics.DiagnosticSource.dll</HintPath>
-	  </Reference>
-	  <Reference Include="System.IdentityModel.Tokens.Jwt">
-	    <HintPath>..\Libs\System.IdentityModel.Tokens.Jwt.dll</HintPath>
-	  </Reference>
-	  <Reference Include="System.Linq.Dynamic.Core">
-	    <HintPath>..\Libs\System.Linq.Dynamic.Core.dll</HintPath>
-	  </Reference>
-	  <Reference Include="System.Runtime.Caching">
-	    <HintPath>..\Libs\System.Runtime.Caching.dll</HintPath>
-	  </Reference>
-	  <Reference Include="System.Security.Cryptography.ProtectedData">
-	    <HintPath>..\Libs\System.Security.Cryptography.ProtectedData.dll</HintPath>
-	  </Reference>
-	  <Reference Include="System.Xml.XPath.XmlDocument">
-	    <HintPath>..\Libs\System.Xml.XPath.XmlDocument.dll</HintPath>
 	  </Reference>
 	  <Reference Include="Z.EntityFramework.Extensions.EFCore">
 	    <HintPath>..\Libs\Z.EntityFramework.Extensions.EFCore.dll</HintPath>

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,7 +14,6 @@
     <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="8.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.1.0" />
     <PackageReference Include="PdfPig" Version="0.1.6" />
-    <PackageReference Include="System.Windows.Extensions" Version="5.0.0" />
     <PackageReference Include="Tesseract" Version="4.1.1" />
     <PackageReference Include="Tesseract.Drawing" Version="4.1.1" />
   </ItemGroup>
@@ -43,9 +42,6 @@
     </Reference>
     <Reference Include="Ezy.APIService.ExcelHelper">
       <HintPath>..\Libs\Ezy.APIService.ExcelHelper.dll</HintPath>
-    </Reference>
-    <Reference Include="Ezy.ApiService.NotifyService">
-      <HintPath>..\Libs\Ezy.ApiService.NotifyService.dll</HintPath>
     </Reference>
     <Reference Include="Ezy.ApiService.ReleaseService">
       <HintPath>..\Libs\Ezy.ApiService.ReleaseService.dll</HintPath>
@@ -106,9 +102,6 @@
     </Reference>
     <Reference Include="Ezy.Module.MSSQLRepository">
       <HintPath>..\Libs\Ezy.Module.MSSQLRepository.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.ReportViewer.WebForms">
-      <HintPath>..\Libs\Microsoft.ReportViewer.WebForms.dll</HintPath>
     </Reference>
     <Reference Include="RestSharp">
       <HintPath>..\Libs\RestSharp.dll</HintPath>

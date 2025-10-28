@@ -112,7 +112,7 @@ namespace SourceOAWebAPI
             if (env.IsDevelopment())
             {
             }
-           // app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
             SetupUseStaticFiles(app, env);
             app.UseRouting();
             app.UseCors(x => x

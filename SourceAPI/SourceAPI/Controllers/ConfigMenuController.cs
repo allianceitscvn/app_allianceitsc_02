@@ -30,7 +30,7 @@ namespace SourceAPI.Controllers
         {
             var result = DoJob<BaseCategoryScreenConfigModel[]>(null, null, (rs) =>
              {
-                 var _model = BaseCategoryScreenConfigModel.Build();
+                 var _model = BaseCategoryScreenConfigModel.Build(this.LogUserId);
 
                  return _model;
              });

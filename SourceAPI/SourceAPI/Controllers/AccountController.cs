@@ -263,7 +263,6 @@ namespace SourceAPI.Controllers
                     if (!string.IsNullOrEmpty(mResult.Msg))
                     {
                         sResult = mResult.Msg;
-
                     }
                     else if (mResult.Data != null)
                     {
@@ -371,7 +370,7 @@ namespace SourceAPI.Controllers
         [Route("ForgotPassword")]
         public EzyResultObject<UserPasswordRecoveryModel> ForgotPassword(UserForgotPassModel model)
         {
-            string sDoJobSuccess  = SystemText_GetValue("msg_forgotpassword_success", "Please see information in your email to reset password"); ;
+            string sDoJobSuccess = SystemText_GetValue("msg_forgotpassword_success", "Please see information in your email to reset password"); ;
             var result = DoJob<UserPasswordRecoveryModel>(model, () =>
              {
                  string sResult = "";
@@ -426,7 +425,7 @@ namespace SourceAPI.Controllers
                  {
                      rs.Msg = sResult;
                  }
-                 
+
                  return recoModel;
              }, sDoJobSuccess);
 
@@ -456,7 +455,7 @@ namespace SourceAPI.Controllers
                  {
                      rs.Msg = sResult;
                  }
-               
+
                  return sResult;
              }, sDoJobSuccess);
             return result;
