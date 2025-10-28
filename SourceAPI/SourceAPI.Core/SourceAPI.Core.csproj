@@ -1,0 +1,65 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <AssemblyName>SourceAPI.Core</AssemblyName>
+    <RootNamespace>SourceAPI.Core</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="app.config.bak" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="DevExpress.Xpo" Version="21.1.6" />
+    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="6.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.3" />
+    <PackageReference Include="Npgsql" Version="5.0.5" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="5.0.2" />
+    <PackageReference Include="System.Numerics.Vectors" Version="4.5.0" />
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.6.0" />
+    <PackageReference Include="System.Threading.Channels" Version="4.7.0" />
+    <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Ezy.APIService.Core">
+      <HintPath>..\Libs\Ezy.APIService.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Ezy.APIService.ExcelHelper">
+      <HintPath>..\Libs\Ezy.APIService.ExcelHelper.dll</HintPath>
+    </Reference>
+    <Reference Include="Ezy.APIService.SQLLogCore">
+      <HintPath>..\Libs\Ezy.APIService.SQLLogCore.dll</HintPath>
+    </Reference>
+    <Reference Include="Ezy.Module.BaseCache">
+      <HintPath>..\Libs\Ezy.Module.BaseCache.dll</HintPath>
+    </Reference>
+    <Reference Include="Ezy.Module.BaseData">
+      <HintPath>..\Libs\Ezy.Module.BaseData.dll</HintPath>
+    </Reference>
+    <Reference Include="Ezy.Module.BaseMSSQLData">
+      <HintPath>..\Libs\Ezy.Module.BaseMSSQLData.dll</HintPath>
+    </Reference>
+    <Reference Include="Ezy.Module.BaseService">
+      <HintPath>..\Libs\Ezy.Module.BaseService.dll</HintPath>
+    </Reference>
+    <Reference Include="Ezy.Module.Library">
+      <HintPath>..\Libs\Ezy.Module.Library.dll</HintPath>
+    </Reference>
+    <Reference Include="Ezy.Module.MSSQLRepository">
+      <HintPath>..\Libs\Ezy.Module.MSSQLRepository.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.EntityFrameworkCore">
+      <HintPath>..\Libs\Microsoft.EntityFrameworkCore.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>
