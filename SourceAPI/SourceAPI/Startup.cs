@@ -64,22 +64,28 @@ namespace SourceOAWebAPI
             #region Login
 
             // Google
-            services.AddAuthentication().AddGoogle(options =>
+            if (config.Google != null && !string.IsNullOrEmpty(config.Google.AppId) && !string.IsNullOrEmpty(config.Google.AppSecret))
             {
-                IConfigurationSection googleAuthNSection =
-                Configuration.GetSection("Authentication:Google");
+                services.AddAuthentication().AddGoogle(options =>
+                {
+                    IConfigurationSection googleAuthNSection =
+                    Configuration.GetSection("Authentication:Google");
 
-                options.ClientId = config.Google.AppId;
-                options.ClientSecret = config.Google.AppSecret;
-            });
+                    options.ClientId = config.Google.AppId;
+                    options.ClientSecret = config.Google.AppSecret;
+                });
+            }
+
 
             // Facebook
-            services.AddAuthentication().AddFacebook(facebookOptions =>
+            if (config.FaceBook != null && !string.IsNullOrEmpty(config.FaceBook.AppId) && !string.IsNullOrEmpty(config.FaceBook.AppSecret))
+            {
+                services.AddAuthentication().AddFacebook(facebookOptions =>
             {
                 facebookOptions.AppId = config.FaceBook.AppId;
                 facebookOptions.AppSecret = config.FaceBook.AppSecret;
             });
-
+            }
             #endregion Login
 
             //#region Swagger
@@ -106,7 +112,7 @@ namespace SourceOAWebAPI
             if (env.IsDevelopment())
             {
             }
-            app.UseHttpsRedirection();
+           // app.UseHttpsRedirection();
             SetupUseStaticFiles(app, env);
             app.UseRouting();
             app.UseCors(x => x
