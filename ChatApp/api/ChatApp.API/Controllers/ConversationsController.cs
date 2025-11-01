@@ -1,3 +1,4 @@
+using ChatApp.Application.Features.DeleteConversation;
 using ChatApp.Application.Features.GetConversationByUser;
 using ChatApp.Application.Features.GetConversationExist;
 using ChatApp.Application.Features.GetMessageOfConversation;
@@ -40,5 +41,18 @@ public class ConversationsController(IMediator mediator, ICurrentUserService cur
         var query = new GetMessageOfConversationQuery(conversationId, currentUserService.GetCurrentUserId(),pagingRequest);
         var result = await mediator.Send(query, cancellationToken);
         return Ok(result);
+    }
+
+    [HttpDelete("{conversationId}")]
+    public async Task<IActionResult> DeleteConversation(Guid conversationId, CancellationToken cancellationToken)
+    {
+        var command = new DeleteConversationCommand(conversationId);
+        var result = await mediator.Send(command, cancellationToken);
+        if (!result)
+        {
+            return NotFound();
+        }
+
+        return NoContent();
     }
 }

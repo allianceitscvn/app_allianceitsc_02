@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Menu, X, Users } from 'lucide-react';
+import { useNavigate, useParams, useLocation } from '@tanstack/react-router';
 import { useAuthStore } from '../../stores/useAuthStore';
 import { useChatStore } from '../../stores/useChatStore';
 import { useDirectoryStore } from '../../stores/useDirectoryStore';
@@ -10,11 +11,16 @@ import { MessageList } from './MessageList';
 import { Composer } from './Composer';
 import { EmptyState } from './EmptyState';
 import { MembersPanel } from './MembersPanel';
+import { TypingIndicator } from './TypingIndicator';
 import { Button } from '@workspace/ui/components/Button';
 import { cn } from '@workspace/ui/lib/utils';
 import Toast from '../../lib/toast';
 
 export function AppShell() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const params = useParams({ strict: false });
+  
   const { currentUser } = useAuthStore();
   const {
     conversations,
@@ -24,13 +30,15 @@ export function AppShell() {
     isSending,
     messagePagination,
     isLoadingMoreMessages,
+    typingUsersByConv,
     loadConversations,
     selectConversation,
     sendMessage,
     addReaction,
     ensureDMWith,
     loadMoreMessages,
-    markAsRead
+    markAsRead,
+    deleteConversation
   } = useChatStore();
   
   const { members, isLoading: membersLoading, loadMembers, subscribeToPresence } = useDirectoryStore();
@@ -72,6 +80,18 @@ export function AppShell() {
     }
   }, [currentUser, loadConversations, loadMembers, subscribeToPresence]);
 
+  // Select conversation from URL params
+  useEffect(() => {
+    const conversationId = (params as any).conversationId;
+    if (conversationId && conversationId !== selectedConvId && conversations.length > 0) {
+      // Check if conversation exists
+      const conversation = conversations.find(c => c.id === conversationId);
+      if (conversation) {
+        selectConversation(conversationId);
+      }
+    }
+  }, [params, conversations, selectedConvId, selectConversation]);
+
   const selectedConversation = conversations.find(c => c.id === selectedConvId);
   const selectedMessages = selectedConvId ? messagesByConv[selectedConvId] || [] : [];
   
@@ -99,13 +119,19 @@ export function AppShell() {
     }
   };
 
-  const handleStartChat = (userId: string) => {
+  const handleStartChat = async (userId: string) => {
     if (currentUser && userId !== currentUser.id) {
       // Find the member to get their display name
       const member = members.find(m => m.id === userId);
       const displayName = member?.displayName;
       
-      ensureDMWith(userId, currentUser.id, displayName);
+      const conversationId = await ensureDMWith(userId, currentUser.id, displayName);
+      
+      // Navigate to the conversation URL
+      if (conversationId) {
+        navigate({ to: `/chat/${conversationId}` as any });
+      }
+      
       // Hide members panel and show chat panel
       setShowMembers(false);
       setShowConversations(false);
@@ -156,9 +182,16 @@ export function AppShell() {
             conversations={conversations}
             selectedConvId={selectedConvId}
             onSelectConversation={(id) => {
+              navigate({ to: `/chat/${id}` as any });
               selectConversation(id);
               setShowConversations(false);
               setShowMembers(false);
+            }}
+            onDeleteConversation={async (id) => {
+              await deleteConversation(id);
+              if (selectedConvId === id) {
+                navigate({ to: '/chat' as any });
+              }
             }}
             currentUser={currentUser}
             isLoading={isLoading}
@@ -185,12 +218,18 @@ export function AppShell() {
                 messages={selectedMessages}
                 currentUserId={currentUser.id}
                 users={members}
+                conversationId={selectedConvId}
                 onReaction={handleReaction}
                 onLoadMore={() => loadMoreMessages(selectedConvId)}
                 hasMore={messagePagination[selectedConvId]?.hasMore || false}
                 isLoadingMore={isLoadingMoreMessages}
               />
+              <TypingIndicator
+                typingUsers={typingUsersByConv[selectedConvId] || []}
+                currentUserId={currentUser.id}
+              />
               <Composer 
+                conversationId={selectedConvId}
                 onSend={handleSendMessage} 
                 isSending={isSending}
                 onFocus={handleComposerFocus}
@@ -200,44 +239,45 @@ export function AppShell() {
             <EmptyState />
           )}
         </div>
-
-        {/* Right - Members Panel (Overlay on mobile, sidebar on desktop) */}
-        {showMembers && (
-          <>
-            {/* Backdrop overlay for mobile */}
+        <>
+          {/* Backdrop overlay for mobile only */}
+          {showMembers && (
             <div 
               className="fixed inset-0 bg-black/50 z-40 lg:hidden"
               onClick={() => setShowMembers(false)}
             />
-            
-            {/* Members Panel */}
-            <div
-              className={cn(
-                'fixed right-0 top-0 bottom-0 w-80 bg-background z-50 shadow-2xl lg:relative lg:shadow-none lg:w-80 xl:w-96 lg:z-0 border-l',
-                'transition-transform duration-300 ease-in-out',
-                showMembers ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'
-              )}
-            >
-              {/* Close button for mobile */}
-              <div className="lg:hidden flex items-center justify-between p-4 border-b">
-                <h2 className="font-semibold">All Members</h2>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setShowMembers(false)}
-                >
-                  <X className="w-5 h-5" />
-                </Button>
-              </div>
-              
-              <MembersPanel
-                members={members}
-                onStartChat={handleStartChat}
-                isLoading={membersLoading}
-              />
+          )}
+          
+          {/* Members Panel */}
+          <div
+            className={cn(
+              'fixed right-0 top-0 bottom-0 w-80 bg-background z-50 shadow-2xl border-l',
+              'lg:relative lg:shadow-none lg:w-80 xl:w-96 lg:z-0',
+              'transition-transform duration-300 ease-in-out lg:transition-none',
+              // On mobile: slide in/out based on showMembers
+              // On large screens: always visible
+              showMembers ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'
+            )}
+          >
+            {/* Close button for mobile only */}
+            <div className="lg:hidden flex items-center justify-between p-4 border-b">
+              <h2 className="font-semibold">All Members</h2>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setShowMembers(false)}
+              >
+                <X className="w-5 h-5" />
+              </Button>
             </div>
-          </>
-        )}
+            
+            <MembersPanel
+              members={members}
+              onStartChat={handleStartChat}
+              isLoading={membersLoading}
+            />
+          </div>
+        </>
       </div>
     </div>
   );

@@ -1,7 +1,8 @@
 using System.Runtime.InteropServices.ComTypes;
 using ChatApp.Application.Abstractions;
 using ChatApp.Application.Features.CreateMessage;
-using ChatApp.Application.Features.ReadMessage; // cần có ConversationId trong command
+using ChatApp.Application.Features.ReadMessage;
+using ChatApp.Infrastructure.Services.User; // cần có ConversationId trong command
 using MediatR;
 using Microsoft.AspNetCore.SignalR;
 
@@ -11,7 +12,8 @@ public class ChatHub(
     IGroupMembershipStore groupStore,
     IPresenceStore presenceStore,
     IMediator mediator,
-    IConversationRepository conversationRepository)
+    IConversationRepository conversationRepository,
+    ICurrentUserService currentUserService)
     : Hub
 {
     public override async Task OnConnectedAsync()
@@ -121,7 +123,7 @@ public class ChatHub(
             throw new HubException("Not a member.");
 
         await Clients.OthersInGroup(conversationId.ToString())
-            .SendAsync("TypingStarted", new { ConversationId = conversationId, UserId = userId });
+            .SendAsync("TypingStarted", new { ConversationId = conversationId, UserId = userId, DisplayName = currentUserService.GetCurrentDisplayName() });
     }
 
     public async Task TypingStopped(Guid conversationId)

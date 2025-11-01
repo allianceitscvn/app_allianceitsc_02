@@ -57,12 +57,6 @@ export const useDirectoryStore = create<DirectoryState & DirectoryActions>((set,
     const handleUserOnline = (userId: string) => {
       console.log('User came online:', userId);
       get().setMemberPresence(userId, true);
-      
-      // Optionally show toast for specific users
-      const member = get().members.find(m => m.id === userId);
-      if (member) {
-        Toast.info(`${member.displayName} is now online`);
-      }
     };
 
     const handleUserOffline = (userId: string) => {

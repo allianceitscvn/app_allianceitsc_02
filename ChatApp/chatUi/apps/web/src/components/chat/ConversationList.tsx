@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { Search } from 'lucide-react';
 import { Conversation, User } from '../../types';
 import { ConversationItem } from './ConversationItem';
 import { Avatar, AvatarImage, AvatarFallback } from '@workspace/ui/components/Avatar';
@@ -7,11 +6,13 @@ import { Input } from '@workspace/ui/components/Textfield';
 import { ScrollArea } from '@workspace/ui/components/ScrollArea';
 import { Skeleton } from '@workspace/ui/components/Skeleton';
 import { mockDirectoryService } from '../../lib/mock/directory';
+import { confirm } from '@workspace/ui/components/ConfirmDialog';
 
 interface ConversationListProps {
   conversations: Conversation[];
   selectedConvId: string | null;
   onSelectConversation: (id: string) => void;
+  onDeleteConversation: (id: string) => Promise<void>;
   currentUser: User;
   isLoading?: boolean;
 }
@@ -20,6 +21,7 @@ export function ConversationList({
   conversations,
   selectedConvId,
   onSelectConversation,
+  onDeleteConversation,
   currentUser,
   isLoading = false
 }: ConversationListProps) {
@@ -42,6 +44,27 @@ export function ConversationList({
     return title.includes(search.toLowerCase()) || otherUserName.includes(search.toLowerCase());
   });
 
+  const handleDeleteConversation = (conversationId: string) => {
+    const conversation = conversations.find(c => c.id === conversationId);
+    const displayName = conversation?.title || 'cuộc trò chuyện này';
+
+    confirm({
+      title: 'Xoá cuộc trò chuyện',
+      description: `Bạn có chắc chắn muốn xóa ${displayName}? Hành động này không thể hoàn tác.`,
+      variant: 'destructive',
+      cancel: { 
+        label: 'Huỷ', 
+        onClick: () => {} 
+      },
+      action: {
+        label: 'Xoá',
+        onClick: async () => {
+          await onDeleteConversation(conversationId);
+        },
+      },
+    });
+  };
+
   return (
     <div className="flex flex-col h-full border-r bg-background">
       {/* Header */}
@@ -59,7 +82,7 @@ export function ConversationList({
         </div>
 
         <Input
-          placeholder="Search conversations..."
+          placeholder="Tìm kiếm"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="w-full"
@@ -96,6 +119,7 @@ export function ConversationList({
                   conversation={item}
                   isSelected={selectedConvId === item.id}
                   onClick={() => onSelectConversation(item.id)}
+                  onDelete={handleDeleteConversation}
                   otherUser={otherUser}
                 />
               );

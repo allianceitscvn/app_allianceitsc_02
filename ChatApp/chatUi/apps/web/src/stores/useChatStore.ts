@@ -5,6 +5,11 @@ import { signalRService } from '../lib/signalr/hub';
 import { conversationsApi } from '../lib/api/conversations';
 import Toast from '../lib/toast';
 
+interface TypingUser {
+  userId: string;
+  displayName: string;
+}
+
 interface ChatState {
   conversations: Conversation[];
   messagesByConv: Record<ID, Message[]>;
@@ -13,6 +18,7 @@ interface ChatState {
   isSending: boolean;
   messagePagination: Record<ID, { pageIndex: number; totalPages: number; hasMore: boolean }>;
   isLoadingMoreMessages: boolean;
+  typingUsersByConv: Record<ID, TypingUser[]>;
 }
 
 interface ChatActions {
@@ -23,7 +29,8 @@ interface ChatActions {
   sendMessage: (text: string, senderId: ID) => Promise<void>;
   addReaction: (convId: ID, msgId: ID, emoji: string, userId: ID) => Promise<void>;
   markAsRead: (convId: ID) => Promise<void>;
-  ensureDMWith: (userId: ID, currentUserId: ID, displayName?: string) => Promise<void>;
+  ensureDMWith: (userId: ID, currentUserId: ID, displayName?: string) => Promise<string | void>;
+  deleteConversation: (conversationId: ID) => Promise<void>;
   updateMessageStatus: (convId: ID, msgId: ID, status: Message['status']) => void;
   subscribeToMessages: () => () => void;
   receiveMessage: (messageData: any) => void;
@@ -38,6 +45,7 @@ export const useChatStore = create<ChatState & ChatActions>((set, get) => ({
   isSending: false,
   messagePagination: {},
   isLoadingMoreMessages: false,
+  typingUsersByConv: {},
 
   loadConversations: async (userId: ID) => {
     set({ isLoading: true });
@@ -140,7 +148,6 @@ export const useChatStore = create<ChatState & ChatActions>((set, get) => ({
     if (selectedConvId && signalRService.isConnected()) {
       try {
         await signalRService.leaveConversation(selectedConvId);
-        console.log('Left conversation:', selectedConvId);
       } catch (error) {
         console.error('Failed to leave conversation:', error);
       }
@@ -152,7 +159,6 @@ export const useChatStore = create<ChatState & ChatActions>((set, get) => ({
     if (signalRService.isConnected()) {
       try {
         await signalRService.joinConversation(conversationId);
-        console.log('Joined conversation:', conversationId);
       } catch (error) {
         console.error('Failed to join conversation:', error);
         Toast.error('Failed to join conversation');
@@ -196,7 +202,6 @@ export const useChatStore = create<ChatState & ChatActions>((set, get) => ({
       // Send message via SignalR hub
       // Backend will handle saving and broadcasting the message
       await signalRService.sendMessage(conversationId, text);
-      console.log('Sent message to conversation:', conversationId);
 
       set({ isSending: false });
       
@@ -275,7 +280,6 @@ export const useChatStore = create<ChatState & ChatActions>((set, get) => ({
       // Only mark as read if SignalR is connected
       if (signalRService.isConnected() && lastMessage.status == 'delivered') {
         await signalRService.markRead(convId, lastMessage.id);
-        console.log('Marked conversation as read:', convId, 'Last message:', lastMessage.id);
       }
       
       // Update local state
@@ -293,7 +297,6 @@ export const useChatStore = create<ChatState & ChatActions>((set, get) => ({
     try {
       // Call API to get or create conversation between users
       const conversationId = await conversationsApi.checkExists(currentUserId, userId);
-      console.log('Conversation ID from API:', conversationId);
       
       // Check if conversation already exists in store
       const exists = get().conversations.find(c => c.id === conversationId);
@@ -316,9 +319,35 @@ export const useChatStore = create<ChatState & ChatActions>((set, get) => ({
       
       // Select the conversation
       get().selectConversation(conversationId);
+      
+      // Return the conversation ID so the caller can navigate to it
+      return conversationId;
     } catch (error) {
       console.error('Failed to create DM:', error);
       Toast.error('Failed to start conversation');
+    }
+  },
+
+  deleteConversation: async (conversationId: ID) => {
+    try {
+      // Call API to delete the conversation
+      await conversationsApi.delete(conversationId);
+      
+      // Remove from store
+      set((state) => {
+        const newMessagesByConv = { ...state.messagesByConv };
+        delete newMessagesByConv[conversationId];
+        
+        return {
+          conversations: state.conversations.filter(c => c.id !== conversationId),
+          messagesByConv: newMessagesByConv,
+          selectedConvId: state.selectedConvId === conversationId ? null : state.selectedConvId
+        };
+      });
+    } catch (error) {
+      console.error('Failed to delete conversation:', error);
+      Toast.error('Failed to delete conversation');
+      throw error;
     }
   },
 
@@ -343,8 +372,6 @@ export const useChatStore = create<ChatState & ChatActions>((set, get) => ({
    * This is called when a new message is created in a conversation
    */
   receiveMessage: (messageData: any) => {
-    console.log('MessageCreated event received:', messageData);
-    
     const { conversations, selectedConvId } = get();
     
     // Extract message data (adjust based on actual server response structure)
@@ -408,8 +435,6 @@ export const useChatStore = create<ChatState & ChatActions>((set, get) => ({
    * This updates the conversation list when a message is sent
    */
   receiveGroupMessage: (bumpData: any) => {
-    console.log('ConversationBump event received:', bumpData);
-    
     const conversationId = bumpData.conversationId || bumpData.ConversationId;
     const lastMessagePreview = bumpData.lastMessagePreview || bumpData.LastMessagePreview;
     const at = bumpData.at || bumpData.At || new Date().toISOString();
@@ -461,13 +486,62 @@ export const useChatStore = create<ChatState & ChatActions>((set, get) => ({
     };
 
     const handleTypingStarted = (data: any) => {
-      console.log('User typing:', data);
-      // TODO: Update typing indicators in UI
+      // Handle both camelCase and PascalCase from server
+      const conversationId = data.conversationId || data.ConversationId;
+      const userId = data.userId || data.UserId;
+      const displayName = data.displayName || data.DisplayName;
+      
+      if (!conversationId || !userId) {
+        console.warn('⚠️ Invalid typing started data:', data);
+        return;
+      }
+
+      set((state) => {
+        const currentTyping = state.typingUsersByConv[conversationId] || [];
+        
+        // Check if user is already in typing list
+        const isAlreadyTyping = currentTyping.some(user => user.userId === userId);
+        
+        if (!isAlreadyTyping) {
+          return {
+            typingUsersByConv: {
+              ...state.typingUsersByConv,
+              [conversationId]: [
+                ...currentTyping,
+                { userId, displayName: displayName || 'Someone' }
+              ]
+            }
+          };
+        }
+        
+        return state;
+      });
     };
 
     const handleTypingStopped = (data: any) => {
-      console.log('User stopped typing:', data);
-      // TODO: Update typing indicators in UI
+      console.log('✋ TypingStopped event received:', data);
+      
+      // Handle both camelCase and PascalCase from server
+      const conversationId = data.conversationId || data.ConversationId;
+      const userId = data.userId || data.UserId;
+      
+      if (!conversationId || !userId) {
+        console.warn('⚠️ Invalid typing stopped data:', data);
+        return;
+      }
+
+      console.log(`✅ User ${userId} stopped typing in conversation ${conversationId}`);
+
+      set((state) => {
+        const currentTyping = state.typingUsersByConv[conversationId] || [];
+        
+        return {
+          typingUsersByConv: {
+            ...state.typingUsersByConv,
+            [conversationId]: currentTyping.filter(user => user.userId !== userId)
+          }
+        };
+      });
     };
 
     const handleReadReceiptUpdated = (data: any) => {

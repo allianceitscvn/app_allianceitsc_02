@@ -16,4 +16,16 @@ public class CurrentUserService(IHttpContextAccessor httpContextAccessor) : ICur
 
         throw new InvalidOperationException("User ID not found in the current context.");
     }
+
+    public string GetCurrentDisplayName()
+    {
+        var displayName = httpContextAccessor.HttpContext?.User.Identity!.Name;
+
+        if (!string.IsNullOrEmpty(displayName))
+        {
+            return displayName;
+        }
+
+        throw new InvalidOperationException("Display name not found in the current context.");
+    }
 }

@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { createFileRoute, useNavigate, redirect } from '@tanstack/react-router';
 import { useState, FormEvent } from 'react';
 import { TextField } from 'react-aria-components';
 import { Button } from '@workspace/ui/components/Button';
@@ -8,6 +8,16 @@ import { Card } from '@workspace/ui/components/Card';
 import { useAuthStore } from '../stores/useAuthStore';
 
 export const Route = createFileRoute('/login')({
+  beforeLoad: () => {
+    // Redirect to chat if already authenticated
+    const stored = localStorage.getItem('auth-storage');
+    if (stored) {
+      const authData = JSON.parse(stored);
+      if (authData.state?.currentUser && authData.state?.accessToken) {
+        throw redirect({ to: '/chat' });
+      }
+    }
+  },
   component: LoginPage,
 });
 

@@ -11,6 +11,7 @@ interface MessageListProps {
   messages: Message[];
   currentUserId: string;
   users: Members[];
+  conversationId?: string;
   onReaction?: (messageId: string, emoji: string) => void;
   onLoadMore?: () => void;
   hasMore?: boolean;
@@ -20,35 +21,65 @@ interface MessageListProps {
 export function MessageList({ 
   messages, 
   currentUserId, 
-  users, 
+  users,
+  conversationId,
   onReaction,
   onLoadMore,
   hasMore = false,
   isLoadingMore = false
 }: MessageListProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const [isFirstLoad, setIsFirstLoad] = useState(true);
+  const [shouldScrollToBottom, setShouldScrollToBottom] = useState(true);
   const previousScrollHeight = useRef<number>(0);
+  const previousConversationId = useRef<string | undefined>(conversationId);
+  const isNearBottom = useRef(true);
 
+  // Reset scroll state when conversation changes
   useEffect(() => {
-    // Scroll to bottom only on first load
-    if (scrollRef.current && isFirstLoad && messages.length > 0) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-      setIsFirstLoad(false);
+    if (conversationId !== previousConversationId.current) {
+      console.log('🔄 Conversation changed, will scroll to bottom');
+      previousConversationId.current = conversationId;
+      setShouldScrollToBottom(true);
+      isNearBottom.current = true;
     }
-  }, [messages, isFirstLoad]);
+  }, [conversationId]);
 
+  // Scroll to bottom when conversation changes or new messages arrive (if user is near bottom)
   useEffect(() => {
-    // Maintain scroll position when loading older messages
-    if (scrollRef.current && !isFirstLoad && previousScrollHeight.current > 0) {
+    if (scrollRef.current && messages.length > 0) {
+      if (shouldScrollToBottom) {
+        requestAnimationFrame(() => {
+          if (scrollRef.current) {
+            scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+          }
+        });
+        setShouldScrollToBottom(false);
+      } else if (isNearBottom.current) {
+        // Auto-scroll to bottom when new messages arrive (if user is already near bottom)
+        requestAnimationFrame(() => {
+          if (scrollRef.current) {
+            scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+          }
+        });
+      }
+    }
+  }, [messages, shouldScrollToBottom]);
+
+  // Maintain scroll position when loading older messages
+  useEffect(() => {
+    if (scrollRef.current && !shouldScrollToBottom && previousScrollHeight.current > 0) {
       const newScrollHeight = scrollRef.current.scrollHeight;
       const heightDifference = newScrollHeight - previousScrollHeight.current;
       scrollRef.current.scrollTop = heightDifference;
     }
-  }, [messages, isFirstLoad]);
+  }, [messages, shouldScrollToBottom]);
 
   const handleScroll = (event: React.UIEvent<HTMLDivElement>) => {
     const target = event.currentTarget;
+    
+    // Check if user is near the bottom (within 100px)
+    const distanceFromBottom = target.scrollHeight - target.scrollTop - target.clientHeight;
+    isNearBottom.current = distanceFromBottom < 100;
     
     // Load more when scrolled to top
     if (target.scrollTop === 0 && hasMore && !isLoadingMore && onLoadMore) {

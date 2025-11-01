@@ -83,5 +83,14 @@ export const conversationsApi = {
         params: { pageIndex, pageSize }
       }
     );
+  },
+
+  /**
+   * Delete a conversation
+   * @param conversationId - The conversation ID to delete
+   * @returns Promise<void>
+   */
+  delete: async (conversationId: string): Promise<void> => {
+    return apiClient.delete(`/api/conversations/${conversationId}`);
   }
 };

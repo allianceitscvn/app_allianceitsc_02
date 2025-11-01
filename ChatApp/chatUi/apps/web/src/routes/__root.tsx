@@ -2,6 +2,7 @@ import { Outlet, createRootRoute } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
 import { Providers } from '@/shared/components/Providers'
 import { Toaster } from '@/lib/toast'
+import { ConfirmDialog } from '@workspace/ui/components/ConfirmDialog'
 
 export const Route = createRootRoute({
     component: RootComponent,
@@ -36,6 +37,7 @@ function RootComponent() {
                     },
                 }}
             />
+            <ConfirmDialog />
             <Outlet />
             <TanStackRouterDevtools position="bottom-right" />
         </Providers>

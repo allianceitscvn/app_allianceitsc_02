@@ -171,4 +171,35 @@
             radial-gradient(circle at 80% 80%, oklch(0.17 0.015 260) 0%, transparent 50%),
             repeating-linear-gradient(45deg, transparent, transparent 10px, oklch(0.19 0.01 240) 10px, oklch(0.19 0.01 240) 20px);
     }
+
+    /* Typing indicator animations */
+    @keyframes typing-dot {
+
+        0%,
+        60%,
+        100% {
+            transform: translateY(0);
+            opacity: 0.7;
+        }
+
+        30% {
+            transform: translateY(-8px);
+            opacity: 1;
+        }
+    }
+
+    .animate-typing-dot-1 {
+        animation: typing-dot 1.4s infinite;
+        animation-delay: 0s;
+    }
+
+    .animate-typing-dot-2 {
+        animation: typing-dot 1.4s infinite;
+        animation-delay: 0.2s;
+    }
+
+    .animate-typing-dot-3 {
+        animation: typing-dot 1.4s infinite;
+        animation-delay: 0.4s;
+    }
 }
