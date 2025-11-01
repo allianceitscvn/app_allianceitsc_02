@@ -4,8 +4,8 @@ using System.Text.Json.Serialization;
 using ChatApp.Application;
 using ChatApp.Application.Middlewares;
 using ChatApp.Controllers;
+using ChatApp.Domain.Enum;
 using ChatApp.Infrastructure;
-using ChatApp.Infrastructure.Persistence.Enum;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -38,6 +38,7 @@ builder.Services.AddControllers(options =>
         options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
     });
 
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddInfrastructureServices();
 builder.Services.AddApplicationServices();
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");

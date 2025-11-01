@@ -76,6 +76,16 @@ public class InMemoryGroupStore : IGroupMembershipStore
         }
     }
 
+    public Task<bool> IsUserMemberAsync(string conversationId, string userCode)
+    {
+        lock (_lock)
+        {
+            if (_groupToUsers.TryGetValue(conversationId, out var users))
+                return Task.FromResult(users.Contains(userCode));
+            return Task.FromResult(false);
+        }
+    }
+
     public Task<bool> GroupExistsAsync(string groupId)
     {
         lock (_lock)

@@ -1,7 +1,9 @@
 using ChatApp.Application.Abstractions;
 using ChatApp.Application.Abstractions.Services;
 using ChatApp.Infrastructure.Persistence;
+using ChatApp.Infrastructure.Persistence.Conversation;
 using ChatApp.Infrastructure.Services;
+using ChatApp.Infrastructure.Services.User;
 using ChatApp.Infrastructure.Stores;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,6 +27,9 @@ public static class ServiceRegistrations
         services.AddScoped<IOAuthClientsRepository, OAuthClientsRepository>();
         services.AddScoped<IOAuthClientSecretsRepository, OAuthClientSecretsRepository>();
         services.AddScoped<IUsersRepository, UsersRepository>();
+        services.AddScoped<IConversationRepository, ConversationRepository>();
+        services.AddScoped<ICurrentUserService, CurrentUserService>();
+        services.AddScoped<IMessageRepository, MessageRepository>();
         return services;
     }
 }

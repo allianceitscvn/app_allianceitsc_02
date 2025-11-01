@@ -1,3 +1,5 @@
+using ChatApp.Contracts.Utils;
+
 namespace ChatApp.Domain.Entities;
 
 public class Messages
@@ -14,4 +16,20 @@ public class Messages
     public Conversations Conversation { get; set; } = default!;
     public Users SenderUser { get; set; } = default!;
     public ICollection<ConversationReadState> ReadStatesPointingHere { get; set; } = new List<ConversationReadState>();
+
+    public Messages()
+    {
+        CreatedAt = DateTimeOffset.UtcNow;
+        Id = GuidExtensions.CreateVersion7();
+    }
+
+    public static Messages Create(Guid conversationId, Guid senderId, string content)
+    {
+        return new Messages
+        {
+            ConversationId = conversationId,
+            SenderUserId = senderId,
+            Content = content
+        };
+    }
 }

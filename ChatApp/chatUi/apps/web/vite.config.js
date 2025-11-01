@@ -9,6 +9,8 @@ export default defineConfig({
     resolve: {
         alias: {
             '@': resolve(__dirname, './src'),
+            '@workspace/ui': resolve(__dirname, '../../packages/ui/src'),
+            '@workspace/lib': resolve(__dirname, '../../packages/lib/src'),
         },
     },
 })

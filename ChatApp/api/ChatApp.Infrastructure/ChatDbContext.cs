@@ -1,6 +1,6 @@
 using ChatApp.Domain.Entities;
+using ChatApp.Domain.Enum;
 using ChatApp.Domain.Views;
-using ChatApp.Infrastructure.Persistence.Enum;
 using Microsoft.EntityFrameworkCore;
 
 namespace ChatApp.Infrastructure;
@@ -52,7 +52,7 @@ public class ChatDbContext : DbContext
             b.HasOne(p => p.CreatedByUser)
                 .WithMany()
                 .HasForeignKey(p => p.CreatedByUserId)
-                .OnDelete(DeleteBehavior.SetNull);
+                .OnDelete(DeleteBehavior.Restrict);
         });
 
         // CONVERSATION MEMBERS (composite PK)

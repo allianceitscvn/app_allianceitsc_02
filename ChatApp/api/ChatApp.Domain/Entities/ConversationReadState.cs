@@ -10,4 +10,15 @@ public class ConversationReadState
     public Conversations Conversation { get; set; } = default!;
     public Users User { get; set; } = default!;
     public Messages? LastReadMessage { get; set; }
+    
+    public static ConversationReadState Create(Guid conversationId, Guid userId, Guid? lastReadMessageId)
+    {
+        return new ConversationReadState
+        {
+            ConversationId = conversationId,
+            UserId = userId,
+            LastReadMessageId = lastReadMessageId,
+            LastReadAt = DateTimeOffset.UtcNow
+        };
+    }
 }

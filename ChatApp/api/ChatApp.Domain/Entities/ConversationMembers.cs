@@ -9,4 +9,9 @@ public class ConversationMembers
 
     public Conversations Conversation { get; set; } = default!;
     public Users User { get; set; } = default!;
+
+    public ConversationMembers()
+    {
+        JoinedAt = DateTimeOffset.UtcNow;
+    }
 }

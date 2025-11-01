@@ -7,4 +7,8 @@
         <RootNamespace>ChatApp.Domain</RootNamespace>
     </PropertyGroup>
 
+    <ItemGroup>
+        <ProjectReference Include="..\ChatApp.Contracts\ChatApp.Contracts.csproj"/>
+    </ItemGroup>
+
 </Project>

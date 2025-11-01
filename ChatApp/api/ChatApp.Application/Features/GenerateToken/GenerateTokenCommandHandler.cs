@@ -20,7 +20,7 @@ public class GenerateTokenCommandHandler(IJwtService jwtService, IUsersRepositor
         
         var claims = new List<Claim>()
         {
-            new Claim("ApplicationUserCode", existUser.ApplicationCode),
+            new Claim("userId", existUser.Id.ToString()),
         };
         var accessToken = jwtService.GenerateToken(existUser.Id.ToString(), existUser.UserName,"", DateTime.Now.AddDays(15), claims);
         var refreshToken = jwtService.GenerateToken(existUser.Id.ToString(), existUser.UserName,"", DateTime.Now.AddDays(30), claims);
@@ -29,7 +29,13 @@ public class GenerateTokenCommandHandler(IJwtService jwtService, IUsersRepositor
         {
             AccessToken = accessToken,
             RefreshToken = refreshToken,
-            ExpiresAt = DateTime.Now.AddDays(15)
+            ExpiresAt = DateTime.Now.AddDays(15),
+            User = new UserLogin
+            {
+                Id = existUser.Id,
+                Username = existUser.UserName,
+                DisplayName = existUser.DisplayName
+            }
         };
     }
 }

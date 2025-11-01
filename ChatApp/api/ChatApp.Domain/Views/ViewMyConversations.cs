@@ -1,4 +1,4 @@
-using ChatApp.Infrastructure.Persistence.Enum;
+using ChatApp.Domain.Enum;
 
 namespace ChatApp.Domain.Views;
 

@@ -8,6 +8,7 @@ public interface IGroupMembershipStore
     Task RemoveMemberAsync(string groupId, string userCode);
     Task<IReadOnlyCollection<string>> ListGroupsOfUserAsync(string userCode);
     Task<IReadOnlyCollection<string>> ListMembersAsync(string groupId);
+    Task<bool> IsUserMemberAsync(string conversationId, string userCode);
     Task<bool> GroupExistsAsync(string groupId);
     Task UpdateUserLastActiveTimeAsync(string userCode);
     void CleanUpUser();
